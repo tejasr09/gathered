@@ -1,0 +1,68 @@
+{
+  "name": "Gathered — design tokens",
+  "description": "Figma-ready token reference. Create a page named 01 Foundations and add the collections below as local Variables.",
+  "collections": [
+    {
+      "name": "Color / Core",
+      "modes": ["Default"],
+      "variables": {
+        "color/ink": { "type": "COLOR", "values": ["#253431"] },
+        "color/ink-soft": { "type": "COLOR", "values": ["#40504C"] },
+        "color/paper": { "type": "COLOR", "values": ["#F5F1E9"] },
+        "color/paper-white": { "type": "COLOR", "values": ["#FBFAF6"] },
+        "color/sand": { "type": "COLOR", "values": ["#E7DECE"] },
+        "color/sage": { "type": "COLOR", "values": ["#C5D1AE"] },
+        "color/rust": { "type": "COLOR", "values": ["#D17158"] },
+        "color/rose": { "type": "COLOR", "values": ["#E4AAA2"] },
+        "color/lilac": { "type": "COLOR", "values": ["#CBBFE4"] },
+        "color/gold": { "type": "COLOR", "values": ["#D5A75B"] },
+        "color/line": { "type": "COLOR", "values": ["#25343130"] },
+        "color/text-muted": { "type": "COLOR", "values": ["#7D8278"] },
+        "surface/hero": { "type": "COLOR", "values": ["#F6ECE2"] },
+        "surface/categories": { "type": "COLOR", "values": ["#F0D8C0"] },
+        "surface/services": { "type": "COLOR", "values": ["#F0EAF1"] },
+        "surface/nearby": { "type": "COLOR", "values": ["#E3E9D4"] },
+        "surface/venues": { "type": "COLOR", "values": ["#F0D6D0"] },
+        "surface/event-list": { "type": "COLOR", "values": ["#35324B"] },
+        "surface/organizer": { "type": "COLOR", "values": ["#F1DFB9"] },
+        "surface/closing": { "type": "COLOR", "values": ["#F6EDE6"] }
+      }
+    },
+    {
+      "name": "Color / Event theme",
+      "modes": ["Birthday party", "Wedding", "Naming ceremony", "Get-together", "Workshop"],
+      "variables": {
+        "theme/accent": { "type": "COLOR", "values": ["#D17158", "#B35E62", "#8372A0", "#687D54", "#8372A0"] },
+        "theme/pale": { "type": "COLOR", "values": ["#F4DECE", "#F0DCDA", "#E8E0F1", "#E4EBD8", "#E8E0F1"] },
+        "theme/selected-card": { "type": "COLOR", "values": ["#F5D2B7", "#F0CECB", "#DED4ED", "#DBE5C9", "#DED4ED"] }
+      }
+    },
+    {
+      "name": "Space / Radius / Type",
+      "modes": ["Default"],
+      "variables": {
+        "space/1": { "type": "FLOAT", "values": [4] },
+        "space/2": { "type": "FLOAT", "values": [8] },
+        "space/3": { "type": "FLOAT", "values": [12] },
+        "space/4": { "type": "FLOAT", "values": [16] },
+        "space/6": { "type": "FLOAT", "values": [24] },
+        "space/8": { "type": "FLOAT", "values": [32] },
+        "space/12": { "type": "FLOAT", "values": [48] },
+        "space/16": { "type": "FLOAT", "values": [64] },
+        "space/24": { "type": "FLOAT", "values": [96] },
+        "radius/small": { "type": "FLOAT", "values": [4] },
+        "radius/medium": { "type": "FLOAT", "values": [12] },
+        "radius/pill": { "type": "FLOAT", "values": [999] },
+        "type/body-family": { "type": "STRING", "values": ["DM Sans"] },
+        "type/display-family": { "type": "STRING", "values": ["Playfair Display"] },
+        "type/mono-family": { "type": "STRING", "values": ["DM Mono"] },
+        "type/body-small": { "type": "FLOAT", "values": [10] },
+        "type/body-default": { "type": "FLOAT", "values": [12] },
+        "type/section-title-mobile": { "type": "FLOAT", "values": [52] },
+        "type/section-title-desktop": { "type": "FLOAT", "values": [78] }
+      }
+    }
+  ],
+  "breakpoints": { "mobile": 760, "desktop-content-max": 1440 },
+  "notes": "Token JSON is a handoff reference; the project does not have a connected Figma account to create a native .fig file or publish Variables."
+}
