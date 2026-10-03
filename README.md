@@ -25,7 +25,18 @@ Open the local address Vite prints. Build a production bundle with `npm run buil
 - Responsive styles, semantic forms, visible keyboard focus and reduced-motion handling.
 - Figma token reference and page/component handoff in `design/`.
 
-Demo profiles, events and registrations are saved in this browser with local storage. Authentication is a front-end demo and does not validate an account on a server. Ticket booking is simulated and does not process payments. Copilot answers are rule-based and run locally; historical event reports are illustrative sample data, not analytics from real attendees. Starter data is illustrative because the referenced project table was not present in the folder.
+Without Supabase settings, demo profiles, events and registrations are saved in this browser with local storage. Ticket booking is simulated and does not process payments. Copilot answers are rule-based and run locally. Organizer stats are calculated from that organizer’s past events and their check-in/rating records; the app does not invent sample reviews. Starter event data is illustrative because the referenced project table was not present in the folder.
+
+## Cloud database and deployment
+
+The app can use Supabase Auth and Postgres for real accounts, event records, registrations, check-ins and guest ratings. Without environment variables, it keeps the local demo behavior.
+
+1. Create a Supabase project and run [`supabase/schema.sql`](supabase/schema.sql) in its SQL Editor.
+2. Copy `.env.example` to `.env.local` and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` from the Supabase project API settings. A publishable key is intended for browser use; row-level security limits guests to their registrations and organizers to records for events they own.
+3. Restart `npm run dev`, create an account through the app, then create an event. New events and registrations will be stored in Supabase. If Supabase email confirmation is enabled, confirm the signup email before logging in.
+4. To deploy the frontend, import this GitHub repository into Vercel, set the same two variables for the Production (and Preview, if desired) environment, then deploy. Vite’s `build` command and `dist` output are already configured by the project defaults.
+
+The client stores the Supabase access token in browser local storage for this prototype. For a production ticketing system, add server-side booking validation and payment processing, use short-lived secure session handling, and move capacity checks into a database transaction to prevent overbooking. Historical check-ins and ratings are entered by the organizer in the participant list; no sample reviews are presented as real results.
 
 ## Structure
 

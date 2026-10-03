@@ -13,6 +13,7 @@ export type EventItem = {
   tone: string
   price: string
   organizer: string
+  organizerId?: string
 }
 
 export type Registration = {
@@ -27,21 +28,9 @@ export type Registration = {
   quantity?: number
   unitPrice?: number
   ticketCode?: string
-}
-
-export type PastEventStat = {
-  id: string
-  eventName: string
-  date: string
-  category: string
-  venue: string
-  capacity: number
-  registrations: number
-  checkedIn: number
-  averageRating: number
-  ratingCount: number
-  repeatGuestPercent: number
-  topFeedback: string
+  attendeeId?: string
+  checkedIn?: boolean
+  rating?: number
 }
 
 export const categories = [
@@ -86,13 +75,6 @@ export const initialRegistrations: Registration[] = [
   { id: 'r-01', eventId: 'e-01', name: 'Ananya Rao', email: 'ananya@example.com', phone: '+91 98765 43210', registrationDate: '2026-09-21', status: 'Confirmed' },
   { id: 'r-02', eventId: 'e-01', name: 'Kabir Mehta', email: 'kabir@example.com', phone: '+91 98450 32109', registrationDate: '2026-09-23', status: 'Confirmed' },
   { id: 'r-03', eventId: 'e-02', name: 'Rhea Kapoor', email: 'rhea@example.com', phone: '+91 99860 12345', registrationDate: '2026-09-24', status: 'Confirmed' },
-]
-
-// Illustrative aggregate reports for the demo dashboard; not linked to real people.
-export const pastEventStats: PastEventStat[] = [
-  { id: 'p-01', eventName: 'An evening under the trees', date: '2026-05-16', category: 'Wedding', venue: 'The Glasshouse', capacity: 120, registrations: 108, checkedIn: 96, averageRating: 4.8, ratingCount: 62, repeatGuestPercent: 28, topFeedback: 'The garden setting and relaxed dinner made the evening feel personal.' },
-  { id: 'p-02', eventName: 'Sunday table, long lunch', date: '2026-04-19', category: 'Get-together', venue: 'The Glasshouse', capacity: 48, registrations: 43, checkedIn: 38, averageRating: 4.6, ratingCount: 24, repeatGuestPercent: 41, topFeedback: 'Guests loved the long-table format and the easy pace of the afternoon.' },
-  { id: 'p-03', eventName: 'Make a little room for art', date: '2026-03-22', category: 'Workshop', venue: 'Studio 06', capacity: 20, registrations: 20, checkedIn: 18, averageRating: 4.9, ratingCount: 16, repeatGuestPercent: 22, topFeedback: 'Clear materials and a welcoming host helped first-timers feel comfortable.' },
 ]
 
 export function readStored<T>(key: string, fallback: T): T {
