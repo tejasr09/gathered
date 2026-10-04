@@ -36,6 +36,18 @@ export const database = {
     localStorage.setItem(TOKEN_KEY, session.access_token)
     return session
   },
+  signOut: async () => {
+    const session = localStorage.getItem(TOKEN_KEY)
+    try {
+      if (ready && session) {
+        await fetch(`${url}/auth/v1/logout`, { method: 'POST', headers: { apikey: anonKey || '', Authorization: `Bearer ${session}` } })
+      }
+    } catch {
+      // Always clear the local session, including when the browser is offline.
+    } finally {
+      localStorage.removeItem(TOKEN_KEY)
+    }
+  },
   load: async () => {
     const [events, registrations] = await Promise.all([
       request<EventItem[]>('/rest/v1/events?select=*&order=date.asc'),

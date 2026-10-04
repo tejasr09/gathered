@@ -1,5 +1,5 @@
 import { FormEvent, ReactNode, Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Check, ChevronDown, CircleHelp, Compass, Filter, Heart, MapPin, Menu, Plus, Search, SlidersHorizontal, Sparkles, Users, X } from 'lucide-react'
+import { ArrowDown, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Check, ChevronDown, CircleHelp, Compass, Filter, Heart, LogOut, MapPin, Menu, Plus, Search, SlidersHorizontal, Sparkles, Users, X } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
@@ -18,7 +18,7 @@ type Profile = { id?: string; name: string; email: string; organizer: boolean }
 const photo = (id: string, width = 900) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=82`
 const prettyDate = (date: string) => new Date(`${date}T12:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 
-function Header({ screen, setScreen, openAuth, openDestination, signedIn, isOrganizer }: { screen: Screen; setScreen: (screen: Screen) => void; openAuth: (to?: Destination) => void; openDestination: (to: Destination) => void; signedIn: boolean; isOrganizer: boolean }) {
+function Header({ screen, setScreen, openAuth, openDestination, onLogout, signedIn, isOrganizer }: { screen: Screen; setScreen: (screen: Screen) => void; openAuth: (to?: Destination) => void; openDestination: (to: Destination) => void; onLogout: () => void; signedIn: boolean; isOrganizer: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const go = (id: string) => {
     setMenuOpen(false)
@@ -44,7 +44,7 @@ function Header({ screen, setScreen, openAuth, openDestination, signedIn, isOrga
         <a href="#venues" onClick={(e) => { e.preventDefault(); go('venues') }}>Venues</a>
         <a href="#event-list" onClick={(e) => { e.preventDefault(); go('event-list') }}>Event list</a>
         <button className="nav-create" onClick={() => { setMenuOpen(false); openDestination({ screen: 'editor' }) }}>Create an event <ArrowUpRight size={14} /></button>
-        <button className="nav-login" onClick={account}>{signedIn ? (isOrganizer ? 'My dashboard' : 'My account') : 'Log in / Sign up'} <ArrowRight size={14} /></button>
+        {signedIn ? <><button className="nav-login" onClick={account}>{isOrganizer ? 'My dashboard' : 'My account'} <ArrowRight size={14} /></button><button className="nav-login" onClick={() => { setMenuOpen(false); onLogout() }}>Log out <LogOut size={14} /></button></> : <button className="nav-login" onClick={() => { setMenuOpen(false); openAuth() }}>Log in / Sign up <ArrowRight size={14} /></button>}
       </nav>
     </header>
   )
@@ -193,13 +193,14 @@ function AuthScreen({ destination, onBack, onComplete }: { destination: Destinat
     if (!email.includes('@') || password.length < 6 || (mode === 'signup' && name.trim().length < 2)) { setError(mode === 'signup' ? 'Add your name, a valid email and a password of at least 6 characters.' : 'Enter a valid email and a password of at least 6 characters.'); return }
     setSaving(true)
     try { await onComplete({ name: name.trim() || email.split('@')[0], email, organizer }, mode, password) }
-    catch (cause) { setError(cause instanceof Error ? cause.message : 'Sign in failed. Please try again.') }
+    catch (cause) { setError(mode === 'login' ? 'We could not sign in with those details. Use the email and password for an account you have already created, or switch to Sign up.' : cause instanceof Error ? cause.message : 'Sign up failed. Please try again.') }
     finally { setSaving(false) }
   }
   return <main className="auth-page">
     <div className="auth-visual"><button className="auth-back" onClick={onBack}><ArrowLeft size={16} /> Back to exploring</button><a className="wordmark auth-wordmark" href="#home" onClick={(e) => { e.preventDefault(); onBack() }}><span className="wordmark-symbol">g.</span><span>gathered<span className="wordmark-dot">.</span></span></a><div className="auth-visual-copy"><span className="eyebrow">A GOOD THING STARTS HERE</span><h1>Come on in.<br /><em>It’s better together.</em></h1><p>Your next good day is a few details away.</p></div><div className="auth-collage"><div className="auth-collage-photo" style={{ backgroundImage: `url(${photo('photo-1511988617509-a57c8a288659', 850)})` }} /><span>GOOD PEOPLE<br />GOOD PLANS</span><i>✳</i></div><span className="auth-visual-footer">GATHER THE GOOD STUFF.</span></div>
-    <div className="auth-form-side"><div className="auth-form-box"><div className="auth-mobile-brand"><span className="wordmark-symbol">g.</span> gathered.</div><p className="eyebrow">{mode === 'signup' ? 'A LITTLE SPACE FOR BIG DAYS' : 'GOOD TO SEE YOU AGAIN'}</p><h2>{mode === 'signup' ? 'Let’s make it a date.' : 'Welcome back.'}</h2><p className="auth-description">{destination?.screen === 'event' ? 'Create a free profile to see all the details for this gathering.' : destination?.screen === 'registration' ? 'One quick step, then you can save your place.' : destination?.screen === 'editor' ? 'Create an organizer profile to start planning your event.' : 'Save the things you love and keep every good plan close.'}</p>
-      <div className="auth-switch"><button className={mode === 'signup' ? 'active' : ''} onClick={() => { setMode('signup'); setError('') }}>Sign up</button><button className={mode === 'login' ? 'active' : ''} onClick={() => { setMode('login'); setError('') }}>Log in</button></div>
+    <div className="auth-form-side"><div className="auth-form-box"><div className="auth-mobile-brand"><span className="wordmark-symbol">g.</span> gathered.</div><p className="eyebrow">{mode === 'signup' ? 'A LITTLE SPACE FOR BIG DAYS' : 'GOOD TO SEE YOU AGAIN'}</p><h2>{mode === 'signup' ? 'Let’s make it a date.' : 'Welcome back.'}</h2><p className="auth-description">{mode === 'login' ? 'Log in with the email and password you used when you created your Gathered account.' : destination?.screen === 'event' ? 'Create a free profile to see all the details for this gathering.' : destination?.screen === 'registration' ? 'One quick step, then you can save your place.' : destination?.screen === 'editor' ? 'Create an organizer profile to start planning your event.' : 'Save the things you love and keep every good plan close.'}</p>
+      <div className="auth-switch"><button type="button" className={mode === 'signup' ? 'active' : ''} aria-pressed={mode === 'signup'} onClick={() => { setMode('signup'); setError('') }}>Create account</button><button type="button" className={mode === 'login' ? 'active' : ''} aria-pressed={mode === 'login'} onClick={() => { setMode('login'); setError('') }}>Log in</button></div>
+      <p className="auth-mode-note">{mode === 'login' ? 'Log in works for accounts already registered with Gathered.' : 'New here? Create your account first, then log in any time.'}</p>
       <form className="auth-form" onSubmit={submit}>{mode === 'signup' && <label>Your name<input autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="How should we call you?" required minLength={2} /></label>}<label>Email address<input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required /></label><label>Password<input type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" minLength={6} required /></label>
         <label className="organizer-toggle"><input type="checkbox" checked={organizer} onChange={(e) => setOrganizer(e.target.checked)} /><span className="toggle-ui" /><span><strong>I’m here to organize</strong><small>Open the event tools after signing in.</small></span></label>
         {error && <p className="form-error" role="alert">{error}</p>}<button className="button button-dark auth-submit" type="submit" disabled={saving}>{saving ? 'Connecting…' : mode === 'signup' ? 'Create my account' : 'Log in'} <ArrowRight size={16} /></button>
@@ -280,8 +281,8 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('home')
   const [destination, setDestination] = useState<Destination | null>(null)
   const [profile, setProfile] = useState<Profile | null>(() => { const saved = readStored<Profile | null>('gathered-profile', null); return database.ready && (!saved?.id || !localStorage.getItem('gathered-db-token')) ? null : saved })
-  const [events, setEvents] = useState<EventItem[]>(() => readStored('gathered-events', initialEvents))
-  const [registrations, setRegistrations] = useState<Registration[]>(() => readStored('gathered-registrations', initialRegistrations))
+  const [events, setEvents] = useState<EventItem[]>(() => database.ready ? [] : readStored('gathered-events', initialEvents))
+  const [registrations, setRegistrations] = useState<Registration[]>(() => database.ready ? [] : readStored('gathered-registrations', initialRegistrations))
   const [selectedEvent, setSelectedEvent] = useState(initialEvents[0].id)
   const [selectedContent, setSelectedContent] = useState('')
   const [selectedVenueLocation, setSelectedVenueLocation] = useState('')
@@ -296,8 +297,8 @@ export default function App() {
   useEffect(() => { localStorage.setItem('gathered-registrations', JSON.stringify(registrations)) }, [registrations])
   useEffect(() => { if (profile) localStorage.setItem('gathered-profile', JSON.stringify(profile)); else localStorage.removeItem('gathered-profile') }, [profile])
   useEffect(() => {
-    if (!database.ready || !localStorage.getItem('gathered-db-token')) return
-    database.load().then((data) => { setEvents(data.events.length ? data.events : initialEvents); setRegistrations(data.registrations) }).catch((error: Error) => setSyncNote(`Cloud data could not load: ${error.message}`))
+    if (!database.ready) return
+    database.load().then((data) => { setEvents(data.events); setRegistrations(data.registrations) }).catch((error: Error) => setSyncNote(`Cloud data could not load: ${error.message}`))
   }, [])
 
   useEffect(() => {
@@ -328,20 +329,27 @@ export default function App() {
   const navigate = (to: Destination) => { setScreen(to.screen); if (to.id && ['event', 'registration', 'participants'].includes(to.screen)) setSelectedEvent(to.id); if (to.id && (to.screen === 'service' || to.screen === 'venue')) setSelectedContent(to.id); if (to.screen === 'editor') setEditEventId(to.id ?? null) }
   const openDestination = (to: Destination) => { const organizerFlow = ['editor', 'dashboard', 'participants'].includes(to.screen); if (!profile || (organizerFlow && !profile.organizer)) { setDestination(to); setScreen('auth') } else navigate(to) }
   const openAuth = (to?: Destination) => { setDestination(to ?? null); setScreen('auth') }
+  const logout = async () => {
+    await database.signOut()
+    setProfile(null)
+    setDestination(null)
+    setScreen('home')
+    setSyncNote('You have been logged out.')
+  }
   const completeAuth = async (nextProfile: Profile, mode: 'signup' | 'login', password: string) => {
     let resolvedProfile = nextProfile
     if (database.ready) {
       const session = mode === 'signup' ? await database.signUp(nextProfile.email, password, nextProfile.name, nextProfile.organizer) : await database.signIn(nextProfile.email, password)
       resolvedProfile = mapSession(session, nextProfile.organizer)
       const cloud = await database.load()
-      setEvents(cloud.events.length ? cloud.events : initialEvents)
+      setEvents(cloud.events)
       setRegistrations(cloud.registrations)
       setSyncNote('Connected to cloud storage.')
     }
     setProfile(resolvedProfile)
     if (destination) { navigate(destination); setDestination(null) } else setScreen(resolvedProfile.organizer ? 'dashboard' : 'home')
   }
-  const event = events.find((item) => item.id === selectedEvent) || events[0]
+  const event = events.find((item) => item.id === selectedEvent) || events[0] || initialEvents[0]
   const confirmedTickets = registrations.filter((item) => item.eventId === event.id && item.status === 'Confirmed').reduce((total, item) => total + (item.quantity || 1), 0)
   const remainingPlaces = Math.max(0, event.capacity - confirmedTickets)
   const editedEvent = editEventId ? events.find((item) => item.id === editEventId) || null : null
@@ -371,7 +379,7 @@ export default function App() {
   const copilotEvents = screen === 'dashboard' ? organizerEvents : screen === 'participants' ? [event] : events.filter((item) => item.status !== 'Draft')
   const copilotContext = { page: pageLabels[screen], event: screen === 'event' || screen === 'registration' || screen === 'participants' ? event : null, search: query, category: chosenCategory }
   const openCopilotEvent = (eventId: string) => openDestination({ screen: 'event', id: eventId })
-  const header = <Header screen={screen} setScreen={setScreen} openAuth={openAuth} openDestination={openDestination} signedIn={!!profile} isOrganizer={!!profile?.organizer} />
+  const header = <Header screen={screen} setScreen={setScreen} openAuth={openAuth} openDestination={openDestination} onLogout={logout} signedIn={!!profile} isOrganizer={!!profile?.organizer} />
 
   return <div className="app-shell">
     {screen === 'home' && <>{header}<Home events={events} chosenCategory={chosenCategory} setChosenCategory={setChosenCategory} openDestination={openDestination} setScreen={setScreen} setSelectedEvent={setSelectedEvent} query={query} setQuery={setQuery} location={location} setLocation={setLocation} locate={locate} locationNote={locationNote} /></>}
