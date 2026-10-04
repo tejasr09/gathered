@@ -1,0 +1,3 @@
+# Supabase CLI project configuration. `supabase link` connects this folder to
+# the hosted project; it does not contain any credentials.
+project_id = "gathered-event-platform"
